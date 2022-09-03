@@ -4,17 +4,16 @@ import (
 	"database/sql"
 	_ "database/sql"
 	"encoding/json"
+	"gangashinienovels_backend/models"
+	"gangashinienovels_backend/driver"
 	"log"
 	"net/http"
-	"os"
-	"gangashinienovels_backend/models"
-	"github.com/lib/pq"
+
 	_ "github.com/lib/pq"
 	"github.com/subosito/gotenv"
 
 	"github.com/gorilla/mux"
 )
-
 
 var books []models.Book
 var db *sql.DB
@@ -30,13 +29,8 @@ func logFatal(err error) {
 }
 
 func main() {
-	pgURL, err := pq.ParseURL(os.Getenv("PG_URL"))
-	logFatal(err)
-	db, err = sql.Open("postgres", pgURL)
-	logFatal(err)
-	err = db.Ping()
-	logFatal(err)
-	log.Println(pgURL)
+	db = driver.ConnectDB()
+
 	router := mux.NewRouter()
 	router.HandleFunc("/books", getBooks).Methods("GET")
 	router.HandleFunc("/books/{id}", getBook).Methods("GET")
