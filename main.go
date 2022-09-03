@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
 
@@ -20,7 +21,9 @@ var books []Book
 
 func main() {
 	router := mux.NewRouter()
-
+	books = append(books, Book{ID: 1, Title: "A", Author: "A", Year: "2022", Description: "sample book A description", Thumbnail: "www.google.lk"},
+		Book{ID: 2, Title: "B", Author: "A", Year: "2022", Description: "sample book B description", Thumbnail: "www.google.lk"},
+		Book{ID: 3, Title: "C", Author: "A", Year: "2022", Description: "sample book C description", Thumbnail: "www.google.lk"})
 	router.HandleFunc("/books", getBooks).Methods("GET")
 	router.HandleFunc("/books/{id}", getBook).Methods("GET")
 	router.HandleFunc("/books", addBook).Methods("POST")
@@ -30,7 +33,8 @@ func main() {
 }
 
 func getBooks(w http.ResponseWriter, r *http.Request) {
-	log.Println("Get all books")
+	//log.Println("Get all books")
+	json.NewEncoder(w).Encode(books)
 }
 func getBook(w http.ResponseWriter, r *http.Request) {
 	log.Println("Get a book")
