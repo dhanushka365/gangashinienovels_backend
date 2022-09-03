@@ -1,43 +1,52 @@
 package main
 
 import (
+	"database/sql"
 	_ "database/sql"
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 
-	"github.com/jinzhu/gorm"
+	"github.com/lib/pq"
 	_ "github.com/lib/pq"
+	"github.com/subosito/gotenv"
 	_ "github.com/subosito/gotenv"
 
 	"github.com/gorilla/mux"
 )
 
-type User struct {
-	gorm.Model
-
-	FName string
-	LName string
-	Email string `gorm:"typevarchar(100);unique_index"`
-	Book  []Book
-}
-
 type Book struct {
-	gorm.Model
-
-	ID          int    `json:id , gorm:"unique_index"`
+	ID          int    `json:id`
 	Title       string `json:title`
 	Author      string `json:author`
 	Year        string `json:year`
 	Description string `json:description`
 	Thumbnail   string `json:thumbnail`
-	UserID      int    `json:userid`
 }
 
 var books []Book
+var db *sql.DB
+
+func init(){
+	gotenv.Load()
+}
+
+func logFatal(err error){
+	if err !=nil{
+	logFatal(err)
+	}
+}
 
 func main() {
+	pgURL ,err :=pq.ParseURL(os.Getenv("PG_URL"))
+	logFatal(err)
+	db, err = sql.Open("postgres", pgURL)
+	logFatal(err)
+	err = db.Ping()
+	logFatal(err)
+	log.Println(pgURL)
 	router := mux.NewRouter()
 	books = append(books, Book{ID: 1, Title: "A", Author: "A", Year: "2022", Description: "sample book A description", Thumbnail: "www.google.lk"},
 		Book{ID: 2, Title: "B", Author: "A", Year: "2022", Description: "sample book B description", Thumbnail: "www.google.lk"},
@@ -79,7 +88,7 @@ func updateBook(w http.ResponseWriter, r *http.Request) {
 	json.NewDecoder(r.Body).Decode(&book)
 
 	for i, item := range books {
-		if item.ID == book.ID {
+		if item.ID == book.ID{
 			books[i] = book
 		}
 	}
@@ -91,9 +100,9 @@ func removeBook(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id, _ := strconv.Atoi(params["id"])
 
-	for i, item := range books {
-		if item.ID == id {
-			books = append(books[:1], books[i+1:]...)
+	for i, item := range books{
+		if item.ID == id{
+			books =append(books[:1],books[i+1:]... )
 		}
 	}
 	json.NewEncoder(w).Encode(books)
