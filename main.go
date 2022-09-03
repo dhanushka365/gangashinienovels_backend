@@ -10,12 +10,12 @@ import (
 )
 
 type Book struct {
-	ID          int    `json:id`
-	Title       string `json:title`
-	Author      string `json:author`
-	Year        string `json:year`
-	Description string `json:description`
-	Thumbnail   string `json:thumbnail`
+	ID          int    `field:id`
+	Title       string `field:title`
+	Author      string `field:author`
+	Year        string `field:year`
+	Description string `field:description`
+	Thumbnail   string `field:thumbnail`
 }
 
 var books []Book
@@ -41,15 +41,20 @@ func getBook(w http.ResponseWriter, r *http.Request) {
 	//log.Println("Get a book")
 	params := mux.Vars(r)
 	//log.Println(params)
-    i, _ := strconv.Atoi(params["id"])
-	for _, book := range books{
-		if book.ID == i{
+	i, _ := strconv.Atoi(params["id"])
+	for _, book := range books {
+		if book.ID == i {
 			json.NewEncoder(w).Encode(&book)
 		}
 	}
 }
 func addBook(w http.ResponseWriter, r *http.Request) {
-	log.Println("Add a books")
+	//log.Println("Add a books")
+	var book Book
+
+	_ = json.NewDecoder(r.Body).Decode(&book)
+	books = append(books, book)
+	json.NewEncoder(w).Encode(books)
 }
 func updateBook(w http.ResponseWriter, r *http.Request) {
 	log.Println("Update a books")
