@@ -3,7 +3,7 @@ package controllers
 import (
 	"database/sql"
 	"encoding/json"
-	"gangashinienovels_backend/models"
+	"gangashinienovels_backend/services/book/models"
 	"net/http"
 
 	"github.com/gorilla/mux"

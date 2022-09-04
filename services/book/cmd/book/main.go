@@ -3,9 +3,9 @@ package main
 import (
 	"database/sql"
 	_ "database/sql"
-	"gangashinienovels_backend/controllers"
-	"gangashinienovels_backend/driver"
-	"gangashinienovels_backend/models"
+	"gangashinienovels_backend/services/book/controllers"
+	"gangashinienovels_backend/services/book/driver"
+	"gangashinienovels_backend/services/book/models"
 
 	"log"
 	"net/http"
