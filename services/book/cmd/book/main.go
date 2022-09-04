@@ -39,5 +39,6 @@ func main() {
 	router.HandleFunc("/books", controller.AddBook(db)).Methods("POST")
 	router.HandleFunc("/books", controller.UpdateBook(db)).Methods("PUT")
 	router.HandleFunc("/books/{id}", controller.RemoveBook(db)).Methods("DELETE")
+	log.Println("server has started !!!")
 	log.Fatal(http.ListenAndServe(":8081", router))
 }
